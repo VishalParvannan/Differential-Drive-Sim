@@ -2,14 +2,48 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+/*
+  RobotContainer organizes all the subsystems and controller bindings
+  It links controller buttons to actions and sets default behaviors
+
+CLASS RobotContainer:
+
+  CREATE Xbox controller on port 0
+
+  CREATE DriveSubsystem
+  CREATE ArmSubsystem
+
+  METHOD RobotContainer():
+    CALL configureBindings()  
+    SET arm's default command to hold at 0°
+    ADD dashboard button "Move Arm to 45°" → sets arm to 45°
+    ADD dashboard button "Stop Arm" → stops the arm
+
+  METHOD configureBindings():
+    SET default drive command to ArcadeDriveCommand (uses joystick)
+    WHEN A is pressed → set arm to 0°
+    WHEN B is pressed → set arm to 45°
+    WHEN X is pressed → set arm to 90°
+    WHEN Y is pressed → stop the arm
+
+  METHOD getAutonomousCommand():
+    RETURN null (no autonomous command set)
+
+ */
+
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ArcadeDriveCommand;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.ArmSubsystem;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -25,15 +59,25 @@ public class RobotContainer {
   // TODO: Initialize your DriveSubsystem here...
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController = new CommandXboxController(
-      OperatorConstants.kDriverControllerPort);
+  private final CommandXboxController m_driverController = new CommandXboxController(OperatorConstants.kDriverControllerPort);
+      
+  private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
+  private final ArmSubsystem m_armSubsystem = new ArmSubsystem(); 
+
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+  
+    
     // Configure the trigger bindings
     configureBindings();
+    m_armSubsystem.setDefaultCommand(m_armSubsystem.setAngleCommand(0)); // hold at 0° by default
+
+    // Add dashboard buttons
+    SmartDashboard.putData("Move Arm to 45°", m_armSubsystem.setAngleCommand(45));
+    SmartDashboard.putData("Stop Arm", m_armSubsystem.stopCommand());
   }
 
   /**
@@ -51,7 +95,11 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // TODO: Insert your default command here...
+    m_driveSubsystem.setDefaultCommand(new ArcadeDriveCommand(m_driveSubsystem, m_driverController));
+    m_driverController.a().onTrue(m_armSubsystem.setAngleCommand(0));    // A button to 0°
+    m_driverController.b().onTrue(m_armSubsystem.setAngleCommand(45));   // B button to 45°
+    m_driverController.x().onTrue(m_armSubsystem.setAngleCommand(90));   // X button to 90°
+    m_driverController.y().onTrue(m_armSubsystem.stopCommand());         // Y button to stop
   }
 
   /**
