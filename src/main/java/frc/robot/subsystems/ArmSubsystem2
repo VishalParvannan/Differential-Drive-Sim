@@ -1,0 +1,23 @@
+package frc.robot.subsystems;
+
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+public class ArmSubsystem2 extends SubsystemBase {
+
+    private final int canID = 1;
+    private final double gearRatio = 15;
+    private final double armLength = 0.5; 
+    private final double minAngleDeg = 0;
+    private final double maxAngleDeg = 90;
+
+    public ArmSubsystem2() {
+
+    }
+
+    @Override
+    public void periodic(){
+
+    }
+
+    
+}
