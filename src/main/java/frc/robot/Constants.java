@@ -2,6 +2,23 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+/*
+ * PSEUDOCODE
+ * 
+ * Class Constants:
+  
+  Stores constants related to the controller/operator input
+  Class OperatorConstants:
+    
+    Controller is connected to port 0 on the Driver Station
+    Define constant integer kDriverControllerPort = 0
+
+  Stores constants related to the robot's drive system
+  Class DriveConstants:
+    
+  (Currently empty - will add motor IDs, gear ratios, etc. here when needed)
+ */
+
 package frc.robot;
 
 /**
